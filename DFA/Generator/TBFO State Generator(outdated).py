@@ -9,6 +9,10 @@ from copy import deepcopy
 from icecream import ic
 from math import *
 
+
+k = '-'
+o = 'O'
+x = 'X'
 pilihan = (1,1)
 #Fungsi fungsi penting
 def win(board):
