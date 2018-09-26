@@ -17,7 +17,6 @@ int nomorState(char* namaState)
 void initDFA(DFA *D, char *namaDaftarState, char *namaTabel, char *namaFinishState, int turn)
 //Load DFA dengan daftar state dan tabel transisinya, serta mengisi pula finish statenya
 {
-    printf("HAi");
     bool baca;
     //baca daftar state
     FILE *fileDaftar = fopen(namaDaftarState, "r");

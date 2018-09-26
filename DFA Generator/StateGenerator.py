@@ -1,7 +1,4 @@
 from copy import deepcopy
-#from icecream import ic
-from math import *
-
 
 pilihan = (1,1)
 k = '-'
@@ -37,9 +34,9 @@ def win(board):
                     return o
     return k
 def score(board,depth):
-    if(win(board)==x): #ganti ini, set ke o untuk player duluan
+    if(win(board)==o): #ganti ini, set ke o untuk player duluan
         return 10-depth
-    elif(win(board)==o): #ganti ini, set ke x untuk player duluan
+    elif(win(board)==x): #ganti ini, set ke x untuk player duluan
         return depth-10
     else:
         return 0
@@ -68,14 +65,14 @@ def minmax(board,depth,player):
         for mov in moveTersedia(board):
             boardTemp = deepcopy(board)
             boardTemp[mov[0]][mov[1]] = player
-            if(player==x): #ganti ini,set ke o untuk player duluan
-                nilai = minmax(boardTemp,depth,o) #ganti ini, set ke x untuk player duluan
+            if(player==o): #ganti ini,set ke o untuk player duluan
+                nilai = minmax(boardTemp,depth,x) #ganti ini, set ke x untuk player duluan
             else:
-                nilai = minmax(boardTemp,depth,x) #ganti ini, set ke o untuk player duluan
+                nilai = minmax(boardTemp,depth,o) #ganti ini, set ke o untuk player duluan
             scores.append(nilai)
             moves.append(mov)
 
-        if(player==x): #ganti ini, set ke o untuk player duluan
+        if(player==o): #ganti ini, set ke o untuk player duluan
             maksIndeks = scores.index(max(scores))
             pilihan = moves[maksIndeks]
             return scores[maksIndeks]
@@ -156,9 +153,9 @@ def genState(s,hasil):
         temp = ['-' for i in range(0,9)]
         for mov in moveTersedia(board):
             boardTemp = deepcopy(board)
-            boardTemp[mov[0]][mov[1]] = o #ganti ini, set ke x untuk player duluan
+            boardTemp[mov[0]][mov[1]] = x #ganti ini, set ke x untuk player duluan
             if(not(gameOver(boardTemp))):
-                minmax(boardTemp,0,x) #ganti ini, set ke o untuk player duluan
+                minmax(boardTemp,0,o) #ganti ini, set ke o untuk player duluan
                 awal = (mov[0]*3)+mov[1]+1
                 nomor = (pilihan[0]*3)+pilihan[1]+1
                 stateBaru = s+','+str(awal)+','+str(nomor)
@@ -182,45 +179,55 @@ def genState(s,hasil):
             if(i!='-'):
                 hasil = genState(i,hasil)
         return hasil           
-
-
 #1Generate state untuk player mulai duluan
-a = genState('5',{})
+a = genState('5,1',{})
 #ganti ke '5' untuk cpu mulai duluan, lalu ganti pula semua kode diatas yang ada #ganti ini
-daftarState = ['(001)5']
+daftarState = []
 #Modifikasi semua state di a agar isi nomor di depannya
-cnt = 2
+cnt = 1
+tempA = {}
+for state in a:
+    namaStateBaru = genNomor(cnt)+state
+    daftarState.append(namaStateBaru)
+    tempA[namaStateBaru] = a[state]
+    cnt += 1
+a = tempA
 for state in a:
     for transisi in range(0,9):
-        if(not(a[state][transisi]=='-')):
-            a[state][transisi] = genNomor(cnt)+a[state][transisi]
-            daftarState.append(a[state][transisi])
-            cnt += 1
+        #Iter semua nama di a untuk nyari nomornya
+        namaDicari = a[state][transisi]
+        if(namaDicari != '-'):
+            for iterState in a:
+                namaIterState = iterState[5:]
+                nomor = 0
+                if(namaDicari == namaIterState):
+                    nomor = int(iterState[1:4]) #mengambil angkanya dari format (###)#,#,#,...
+                    break
+            #Sudah ketemu nomornya
+            a[state][transisi] = genNomor(nomor)+a[state][transisi]
 #Save ke file eksternal statenya
-file = open('daftarStates.txt','w')
+file = open('daftarStatesPlayer.txt','w') #Ganti nama
 cnt = 1
 for i in daftarState:
     file.write(i)
     file.write('\n')
 file.close()
-
 #Save ke file eksternal finish statenya
 finishState = []
-file = open('finishState.txt','w')
+file = open('finishStatePlayer.txt','w') #Ganti nama
 for i in daftarState:
     strTest = i[5:]
     if(gameOver(genBoard(strTest))):
         file.write(i)
         file.write('\n')
 file.close()
-
 #5ave tabel transisi (a) ke file eksternal
-file = open('states.txt','w')
+file = open('statesPlayer.txt','w') #Ganti nama
 for i in a:
+    #s = i.ljust(23)
     s = ''
     for n in a[i]:
         s = s + n.ljust(23)
     file.write(s)
     file.write('\n')
 file.close()
-

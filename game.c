@@ -21,7 +21,7 @@ void startGame(DFA *D, char start)
     initPapan(&game, start);
     printBoard(game);
     Turn(*D) += 1; //Ganti turn
-    while (!isFinal(*D) || !(Turn(*D)%2)) //Berhenti saat mencapai state final, menambah kondisi !Turn(*D)%2 agar cpu bisa mengeprint kondisi terakhir game
+    while (cekMenang(game)==0) //Berhenti saat mencapai state final, menambah kondisi !Turn(*D)%2 agar cpu bisa mengeprint kondisi terakhir game
     {
         if (Turn(*D) % 2)
         {

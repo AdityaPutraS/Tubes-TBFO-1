@@ -17,6 +17,7 @@ void initPapan(PAPAN *P, char start)
 void printBoard(PAPAN P)
 //Print papan ke layar
 {
+    printf("\n");
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -25,6 +26,7 @@ void printBoard(PAPAN P)
         }
         printf("\n");
     }
+    printf("\n");
 }
 int cekMenang(PAPAN P)
 //return 0 jika belum ada yang menang,1 jika O menang, 2 jika X menang, 3 jika draw
