@@ -1,5 +1,5 @@
 from copy import deepcopy
-from icecream import ic
+#from icecream import ic
 from math import *
 
 
@@ -37,9 +37,9 @@ def win(board):
                     return o
     return k
 def score(board,depth):
-    if(win(board)==o): #ganti ini, set ke o untuk player duluan
+    if(win(board)==x): #ganti ini, set ke o untuk player duluan
         return 10-depth
-    elif(win(board)==x): #ganti ini, set ke x untuk player duluan
+    elif(win(board)==o): #ganti ini, set ke x untuk player duluan
         return depth-10
     else:
         return 0
@@ -68,14 +68,14 @@ def minmax(board,depth,player):
         for mov in moveTersedia(board):
             boardTemp = deepcopy(board)
             boardTemp[mov[0]][mov[1]] = player
-            if(player==o): #ganti ini,set ke o untuk player duluan
-                nilai = minmax(boardTemp,depth,x) #ganti ini, set ke x untuk player duluan
+            if(player==x): #ganti ini,set ke o untuk player duluan
+                nilai = minmax(boardTemp,depth,o) #ganti ini, set ke x untuk player duluan
             else:
-                nilai = minmax(boardTemp,depth,o) #ganti ini, set ke o untuk player duluan
+                nilai = minmax(boardTemp,depth,x) #ganti ini, set ke o untuk player duluan
             scores.append(nilai)
             moves.append(mov)
 
-        if(player==o): #ganti ini, set ke o untuk player duluan
+        if(player==x): #ganti ini, set ke o untuk player duluan
             maksIndeks = scores.index(max(scores))
             pilihan = moves[maksIndeks]
             return scores[maksIndeks]
@@ -156,18 +156,18 @@ def genState(s,hasil):
         temp = ['-' for i in range(0,9)]
         for mov in moveTersedia(board):
             boardTemp = deepcopy(board)
-            boardTemp[mov[0]][mov[1]] = x #ganti ini, set ke x untuk player duluan
+            boardTemp[mov[0]][mov[1]] = o #ganti ini, set ke x untuk player duluan
             if(not(gameOver(boardTemp))):
-                minmax(boardTemp,0,o) #ganti ini, set ke o untuk player duluan
+                minmax(boardTemp,0,x) #ganti ini, set ke o untuk player duluan
                 awal = (mov[0]*3)+mov[1]+1
                 nomor = (pilihan[0]*3)+pilihan[1]+1
                 stateBaru = s+','+str(awal)+','+str(nomor)
                 #cek apakah sudah ada sebelumnya
-                cek = [stateBaru] #cek = genAllRotFlip(stateBaru), untuk generate state setelah di rotate / flip / keduanya
-                for i in cek: #for dibiarkan, jaga jaga jika perlu mengenerate state rotate dan flip
-                    if(i in hasil):
-                        stateBaru = i
-                        break
+                #cek = [stateBaru] #cek = genAllRotFlip(stateBaru), untuk generate state setelah di rotate / flip / keduanya
+                #for i in cek: #for dibiarkan, jaga jaga jika perlu mengenerate state rotate dan flip
+                #    if(i in hasil):
+                #        stateBaru = i
+                #       break
                 #sudah ada state dengan kondisi yang sama tapi diputar/mungkin tidak
                 temp[awal-1] = stateBaru
             else:
@@ -185,59 +185,38 @@ def genState(s,hasil):
 
 
 #1Generate state untuk player mulai duluan
-a = genState('5,1',{})
+a = genState('5',{})
 #ganti ke '5' untuk cpu mulai duluan, lalu ganti pula semua kode diatas yang ada #ganti ini
-
-#Generate daftar state
-daftarState = {}
-cnt = 1
-for i in a:
-    daftarState[cnt] = i
-    cnt += 1
-    
+daftarState = ['(001)5']
+#Modifikasi semua state di a agar isi nomor di depannya
+cnt = 2
+for state in a:
+    for transisi in range(0,9):
+        if(not(a[state][transisi]=='-')):
+            a[state][transisi] = genNomor(cnt)+a[state][transisi]
+            daftarState.append(a[state][transisi])
+            cnt += 1
 #Save ke file eksternal statenya
-file = open('daftarStatesPlayer.txt','w')
+file = open('daftarStates.txt','w')
 cnt = 1
-for i in a:
-    if(cnt<10):
-        nomorState = '00' + str(cnt)
-    else:
-        if(cnt<100):
-            nomorState = '0' + str(cnt)
-        else:
-            nomorState = str(cnt)
-    cnt += 1
-    s = '('+nomorState+')'+i
-    file.write(s)
-    file.write('\n')
-file.close()
-
-#Buat daftar finish state
-finishState = []
-cnt = 1
-for i in a:
-    if(a[i] == ['-' for i in range(0,9)]):
-        finishState.append(genNomor(cnt)+i)
-    cnt += 1
-#Save ke file eksternal
-file = open('finishStatePlayer.txt','w')
-for i in finishState:
+for i in daftarState:
     file.write(i)
     file.write('\n')
 file.close()
 
-#Modifikasi semua state di a agar isi nomor di depannya
-for state in a:
-    for transisi in range(0,9):
-        #cari di daftar state
-        for dState in daftarState:
-            if(daftarState[dState] == a[state][transisi]):
-                a[state][transisi] = genNomor(dState)+a[state][transisi]
-                
+#Save ke file eksternal finish statenya
+finishState = []
+file = open('finishState.txt','w')
+for i in daftarState:
+    strTest = i[5:]
+    if(gameOver(genBoard(strTest))):
+        file.write(i)
+        file.write('\n')
+file.close()
+
 #5ave tabel transisi (a) ke file eksternal
-file = open('statesPlayer.txt','w')
+file = open('states.txt','w')
 for i in a:
-    #s = i.ljust(22)
     s = ''
     for n in a[i]:
         s = s + n.ljust(23)
