@@ -1,3 +1,10 @@
+#-----------------------------------#
+#                                   #
+#  Aditya Putra Santosa / 13517013  #
+#          Informatika ITB          #
+#                                   #
+#-----------------------------------#
+
 from copy import deepcopy
 
 pilihan = (1,1)
