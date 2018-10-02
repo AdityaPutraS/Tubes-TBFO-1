@@ -8,7 +8,7 @@ void startGame(DFA *D, char start)
 //Memulai game dengan dfa D dan karakter awal start (X atau O)
 {
     PAPAN game;
-    int pilihan;
+    int pilihan, noStateDilewati = 0;
     if (start == 'X')
     {
         printf("Game dimulai, player harus menaruh di tengah\n");
@@ -17,11 +17,13 @@ void startGame(DFA *D, char start)
     {
         printf("Game dimulai, cpu harus menaruh di tengah\n");
     }
-
+    //Catat state awal
+    strcpy(StateDilewati(*D,noStateDilewati),Daftar(*D,Start(*D)-1));  //Isi -1 karena nomor State dimulai dari 1 dan indeksnya 0
+    noStateDilewati += 1;
     initPapan(&game, start);
     printBoard(game);
-    Turn(*D) += 1; //Ganti turn
-    while (cekMenang(game)==0) //Berhenti saat mencapai state final, menambah kondisi !Turn(*D)%2 agar cpu bisa mengeprint kondisi terakhir game
+    Turn(*D) += 1;               //Ganti turn
+    while (cekMenang(game) == 0) //Berhenti saat game telah selesai
     {
         if (Turn(*D) % 2)
         {
@@ -40,6 +42,10 @@ void startGame(DFA *D, char start)
             isi(game, bar, kol) = 'X';
             //next state dfa
             next(D, pilihan);
+            //Catat perubahan state
+            strcpy(StateDilewati(*D,noStateDilewati),Daftar(*D,Current(*D)-1)); 
+            //Current(*D)-1 karena nomor state dimulai dari 1, dan di indeks dimulai dari 0
+            noStateDilewati += 1;
             //print papan ke layar
             printBoard(game);
         }
@@ -54,19 +60,27 @@ void startGame(DFA *D, char start)
             //print papan ke layar
             printBoard(game);
         }
-        //strcpy(StateDilewati(*D, Turn(*D)), Daftar(*D, Current(*D)));
         Turn(*D) += 1; //Ganti turn
     }
-    //Catat state terakhir
-    //strcpy(StateDilewati(*D, Turn(*D)), Daftar(*D, Current(*D)));
     //Game selesai, output hasil permainan
     int kondisiAkhir = cekMenang(game);
-    if(kondisiAkhir==1){
+    if (kondisiAkhir == 1)
+    {
         printf("CPU MENANG\n");
-    }else if(kondisiAkhir==2){
+    }
+    else if (kondisiAkhir == 2)
+    {
         printf("PLAYER MENANG\n");
-    }else if(kondisiAkhir==3){
+    }
+    else if (kondisiAkhir == 3)
+    {
         printf("DRAW\n");
+    }
+    //Print semua state yang dilewati
+    printf("State yang telah dilewati : \n");
+    for (int i = 0; i < noStateDilewati; i++)    //Loop dari 0 sampai Turn(*D)-1 karena nilai Turn saat selesai adalah banyak state yang dilewati+1
+    {  
+        printf("%s\n",StateDilewati(*D,i));
     }
 }
 bool inputValid(int input, PAPAN P)

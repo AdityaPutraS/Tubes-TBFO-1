@@ -98,6 +98,9 @@ void initDFA(DFA *D, char *namaDaftarState, char *namaTabel, char *namaFinishSta
     Current(*D) = 1;
     Start(*D) = 1;
     Turn(*D) = turn;
+    for(int i = 0;i<7;i++){
+        strcpy(StateDilewati(*D,i),"");
+    }
 }
 
 void next(DFA *D, int X)

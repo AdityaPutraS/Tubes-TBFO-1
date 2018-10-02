@@ -14,7 +14,7 @@ typedef struct
     int start;
     bool final[banyakState];
     int curState;
-    char stateDilewati[6][23]; //max 6 state yang mungkin dilewati
+    char stateDilewati[7][23];
     int turn;
 } DFA;
 
