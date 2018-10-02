@@ -31,7 +31,7 @@ void startGame(DFA *D, char start)
             printf("Sekarang giliranmu, input angka 1-9 yang menandakan tempat di papan : ");
             scanf("%d", &pilihan);
             //Validasi input
-            while (!inputValid(pilihan, game))
+            while (!inputValid(*D, pilihan, game))
             {
                 printf("Input tidak valid, masukkan 1-9 dan di tempat yang kosong : ");
                 scanf("%d", &pilihan);
@@ -81,27 +81,5 @@ void startGame(DFA *D, char start)
     for (int i = 0; i < noStateDilewati; i++)    //Loop dari 0 sampai Turn(*D)-1 karena nilai Turn saat selesai adalah banyak state yang dilewati+1
     {  
         printf("%s\n",StateDilewati(*D,i));
-    }
-}
-bool inputValid(int input, PAPAN P)
-//Mengecek apakah input valid
-{
-    //cek apakah berada di range 1-9
-    if (input >= 1 && input <= 9)
-    {
-        //cek apakah diletakan di tempat yang kosong
-        int bar = (input - 1) / 3, kol = (input - 1) % 3;
-        if (isi(P, bar, kol) == '_')
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    else
-    {
-        return false;
     }
 }

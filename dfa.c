@@ -14,7 +14,7 @@ int nomorState(char* namaState)
     int satuan = (int)namaState[3] - 48;
     return 100*ratusan+10*puluhan+satuan;
 }
-void initDFA(DFA *D, char *namaDaftarState, char *namaTabel, char *namaFinishState, int turn)
+void initDFA(DFA *D,char *namaDaftarSimbol, char *namaDaftarState,char *namaStateAwal, char *namaTabel, char *namaFinishState,int turn)
 //Load DFA dengan daftar state dan tabel transisinya, serta mengisi pula finish statenya
 {
     bool baca;
@@ -95,8 +95,19 @@ void initDFA(DFA *D, char *namaDaftarState, char *namaTabel, char *namaFinishSta
         }
     }
     fclose(fileFinish);
-    Current(*D) = 1;
-    Start(*D) = 1;
+    //Baca start State dari file external
+    FILE *fileStart = fopen(namaStateAwal, "r");
+    fscanf(fileStart, "%d",&Start(*D));
+    fclose(fileStart);
+    Current(*D) = Start(*D);
+    //Baca daftar simbol
+    FILE *fileSimbol = fopen(namaDaftarSimbol, "r");
+    for(int i = 0;i< banyakTipeInput;i++)
+    {
+        fscanf(fileSimbol,"%d",&Simbol(*D,i));
+    }
+    fclose(fileSimbol);
+
     Turn(*D) = turn;
     for(int i = 0;i<7;i++){
         strcpy(StateDilewati(*D,i),"");
@@ -117,4 +128,35 @@ int getMove(DFA D)
     char state[23];
     strcpy(state, Daftar(D, Current(D)-1));  //-1 karena array dari 0
     return (int)state[strlen(state) - 1] - 48; //minus 48 karena '1' = 49
+}
+
+bool inputValid(DFA D,int input,PAPAN P)
+//Mengecek apakah input valid
+{
+    //cek apakah berada di range 1-9
+    bool valid = false;
+    for(int i = 0;i<banyakTipeInput;i++)
+    {
+        if(Simbol(D,i) == input){
+            valid = true;
+            break;
+        }
+    }
+    if (valid)
+    {
+        //cek apakah diletakan di tempat yang kosong
+        int bar = (input - 1) / 3, kol = (input - 1) % 3;
+        if (isi(P, bar, kol) == '_')
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
 }

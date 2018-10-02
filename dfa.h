@@ -15,6 +15,7 @@ typedef struct
     bool final[banyakState];
     int curState;
     char stateDilewati[7][23];
+    int daftarSimbol[banyakTipeInput];
     int turn;
 } DFA;
 
@@ -26,13 +27,14 @@ typedef struct
 #define Start(D) (D).start
 #define isFinal(D) (D).final[Current(D)]
 #define StateDilewati(D, I) (D).stateDilewati[(I)]
+#define Simbol(D,I) (D).daftarSimbol[(I)]
 #define Turn(D) (D).turn
 
 //fungsi
 int nomorState(char *namaState);
 //mendapat nomor state dari nama state yang berformat (nomor)namaState
 
-void initDFA(DFA *D, char *namaDaftarState, char *namaTabel, char *namaFinishState,int turn);
+void initDFA(DFA *D,char *namaDaftarSimbol, char *namaDaftarState,char *namaStateAwal, char *namaTabel, char *namaFinishState,int turn);
 //Load DFA dengan daftar state dan tabel transisinya, serta mengisi pula finish statenya
 
 void next(DFA *D, int X);
@@ -40,4 +42,7 @@ void next(DFA *D, int X);
 
 int getMove(DFA D);
 //Mendapat move dari current state
+
+bool inputValid(DFA D,int input,PAPAN P);
+//Mengecek apakah input valid
 #endif

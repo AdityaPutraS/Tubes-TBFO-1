@@ -19,11 +19,11 @@ int main()
     scanf("%d",&pilihan);
     if(pilihan==0){
         DFA cpuFirst;
-        initDFA(&cpuFirst,"State/daftarStates.txt","State/states.txt","State/finishState.txt",0);
+        initDFA(&cpuFirst,"State/daftarSimbol.txt","State/daftarStates.txt","State/stateAwal.txt","State/states.txt","State/finishState.txt",0);
         startGame(&cpuFirst,'O');
     }else{
         DFA playerFirst;
-        initDFA(&playerFirst,"State/daftarStatesPlayer.txt","State/statesPlayer.txt","State/finishStatePlayer.txt",1);
+        initDFA(&playerFirst,"State/daftarSimbol.txt","State/daftarStatesPlayer.txt","State/stateAwalPlayer.txt","State/statesPlayer.txt","State/finishStatePlayer.txt",1);
         startGame(&playerFirst,'X');
     }
     return 0;
